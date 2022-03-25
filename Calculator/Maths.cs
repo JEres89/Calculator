@@ -21,76 +21,110 @@ namespace Calculator
 			'/'
 		};
 
-		private static readonly Predicate<(decimal, decimal)>[] MathFuncs = { Addition, Subtraction, Multiplication, Division };
+		public static readonly int ADD = 0;
+		public static readonly int SUB = 1;
+		public static readonly int MULT = 2;
+		public static readonly int DIV = 3;
+		
+		private static readonly Func<(double, double), double>[] MathFuncs = { Addition, Subtraction, Multiplication, Division };
 
-		public static void SimpleMath(int fun)
+
+
+		static List<(double, int, double, double)> results = new();
+
+
+		public static double SimpleMath(int func)
 		{
-			decimal a, b;
-			Console.WriteLine("Skriv de två tal som skall {0} (OBS! decimaltecken skrivs med komma ','):", Verb[fun]);
+			double a, b;
+			Console.WriteLine("Skriv de två tal som skall {0}: ", Verb[func]);
 
-			a = ReadNumber();
-			b = ReadNumber();
+			a = ReadNumber(false);
+			b = ReadNumber(func==DIV);
 
-			if (MathFuncs[fun]( (a, b) ))
-			{
-				(decimal, int, decimal, decimal) result = results[results.Count-1];
-				Console.WriteLine("{0} {1} {2} = {3}", result.Item1, Sign[result.Item2], result.Item3, result.Item4);
-			}
-			else
-			{
-				Console.WriteLine("Division med noll är odefinierat");
-			}
+			return Simplemath(func, (a, b));
 		}
 
-		private static decimal ReadNumber()
+		public static double Simplemath(int func, double a, double b )
 		{
-			decimal input;
-			while (!decimal.TryParse(Console.ReadLine(), out input))
+			if (func == DIV)
 			{
-				Console.WriteLine("Inte ett tal, försök igen");
+				if (!ValidateNumber(true, b))
+				{
+					return 0;
+				}
 			}
+
+			return Simplemath(func, (a, b));
+		}
+
+		private static double Simplemath(int func, (double, double) nums)
+		{
+			MathFuncs[func]( nums );
+
+			(double, int, double, double) result = results[results.Count-1];
+			Console.WriteLine("{0} {1} {2} = {3}", result.Item1, Sign[result.Item2], result.Item3, result.Item4);
+
+			return result.Item4;
+		}
+
+
+		private static double ReadNumber(bool divisor)
+		{
+			double input;
+
+			while (true)
+			{
+				while (!double.TryParse(Console.ReadLine(), out input))
+				{
+					Console.WriteLine("Inte ett tal, försök igen");
+				}
+
+				if (ValidateNumber(divisor, input)) break;
+			}
+
 			return input;
 		}
-
-
-		static List<(decimal, int, decimal, decimal)> results = new();
-
-		private static bool Addition((decimal a, decimal b) nums)
+		private static bool ValidateNumber(bool divisor, double num)
 		{
-			decimal result = nums.a + nums.b;
-
-			results.Add((nums.a, 0, nums.b, result));
-
-			return true;
-		}
-		public static bool Subtraction((decimal a, decimal b) nums)
-		{
-			decimal result = nums.a - nums.b;
-
-			results.Add((nums.a, 1, nums.b, result));
-
-			return true;
-		}
-		public static bool Multiplication((decimal a, decimal b) nums)
-		{
-			decimal result = nums.a * nums.b;
-
-			results.Add((nums.a, 2, nums.b, result));
-
-			return true;
-		}
-		public static bool Division((decimal a, decimal b) nums)
-		{
-			if (nums.b == 0)
+			if (divisor && (num == 0))
 			{
+				Console.WriteLine("Division med noll är odefinierat!");
 				return false;
 			}
-
-			decimal result = nums.a / nums.b;
-
-			results.Add((nums.a, 3, nums.b, result));
-
 			return true;
+		}
+
+		public static double Addition((double a, double b) nums)
+		{
+			double result = nums.a + nums.b;
+
+			results.Add((nums.a, ADD, nums.b, result));
+
+			return result;
+		}
+		public static double Subtraction((double a, double b) nums)
+		{
+			double result = nums.a - nums.b;
+
+			results.Add((nums.a, SUB, nums.b, result));
+
+			return result;
+		}
+		public static double Multiplication((double a, double b) nums)
+		{
+			double result = nums.a * nums.b;
+
+			results.Add((nums.a, MULT, nums.b, result));
+
+			return result;
+		}
+		public static double Division((double a, double b) nums)
+		{
+			double result = nums.a / nums.b;
+
+			results.Add((nums.a, DIV, nums.b, result));
+
+			return result;
 		}
 	}
 }
