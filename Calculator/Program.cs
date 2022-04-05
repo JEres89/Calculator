@@ -4,7 +4,7 @@ namespace Calculator
 {
 	class Program
 	{
-		static void Main(string[] args)
+		public static void Main(string[] args)
 		{
 
 			while (true)
@@ -12,13 +12,15 @@ namespace Calculator
 				Console.Clear();
 				Console.WriteLine("-- Calculator -----------\n");
 				Console.WriteLine("  1. Addition");
-				Console.WriteLine("  2. Subtraktion");
-				Console.WriteLine("  3. Multiplikation");
+				Console.WriteLine("  2. Subtraction");
+				Console.WriteLine("  3. Multiplication");
 				Console.WriteLine("  4. Division");
-				Console.WriteLine("  5. Friform");
-				Console.WriteLine("  6. Exit");
+				Console.WriteLine("  5. Additive sum");
+				Console.WriteLine("  6. Subtractive sum");
+				Console.WriteLine("  7. Freeform");
+				Console.WriteLine("  8. Exit");
 				Console.WriteLine("-------------------------\n");
-				Console.Write("Välj funktion # + enter: ");
+				Console.Write("Select function, # + enter: ");
 
 				String s = Console.ReadLine();
 
@@ -26,9 +28,6 @@ namespace Calculator
 
 				switch (choice)
 				{
-					case 0:
-						Console.WriteLine("Ogiltigt val!");
-						break;
 					case 1:
 					case 2:
 					case 3:
@@ -36,11 +35,18 @@ namespace Calculator
 						Maths.SimpleMath(choice - 1); //index correction
 						break;
 					case 5:
-						Console.WriteLine("Ej implementerad");
+						Maths.ComplexMath(Maths.ADD);
 						break;
 					case 6:
+						Maths.ComplexMath(Maths.SUB);
+						break;
+					case 7:
+						Console.WriteLine("Not implemented {0} {1} {2}", Maths.Division((0,0)), Maths.Division((1,0)), Maths.Division((-1,0)));
+						break;
+					case 8:
 						return;
 					default:
+						Console.WriteLine("Invalid choice!");
 						break;
 				}
 
