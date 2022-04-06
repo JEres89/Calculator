@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <StartupObject>Calculator.Program</StartupObject>
+    <StartupObject>Calculator.Calculator</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

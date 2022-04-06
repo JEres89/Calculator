@@ -7,6 +7,7 @@ namespace Calculator
 {
 	public static class Maths
 	{
+		public static InputMethod textSource = InputMethod.defaultConsole;
 
 		private static readonly String[] VERB =
 		{
@@ -26,37 +27,59 @@ namespace Calculator
 		public static readonly int SUB = 1;
 		public static readonly int MULT = 2;
 		public static readonly int DIV = 3;
+
 		
-		private static readonly Func<(double, double), double>[] MathFuncs = { Addition, Subtraction, Multiplication, Division };
+		private static readonly Func<(double, double), double>[] SimpleMathFuncs = { Addition, Subtraction, Multiplication, Division };
 		private static readonly Func<double[], double>[] ComplexMathFuncs = { Addition, Subtraction };
+
+		public static readonly int MATH_SIMPLE = 0;
+		public static readonly int MATH_COMPLEX = 1;
+		public static readonly int[] OPS_OF_TYPE =
+		{
+			SimpleMathFuncs.Length,
+			ComplexMathFuncs.Length
+		};
+
 
 		static readonly List<(double A, int operation, double B, double C)> results = new List<(double A, int operation, double B, double C)>();
 
 		public static double SimpleMath(int operation)
 		{
+			if (!IsValidOperation(operation, MATH_SIMPLE))
+			{
+				Console.WriteLine("No such operation");
+				return double.NaN;
+			}
+
 			double a, b;
 			Console.WriteLine("Type the numbers that shall be {0}: ", VERB[operation]);
 
 			a = ReadNumber(false);
 			b = ReadNumber(operation==DIV);
 
-			return Simplemath(operation, (a, b));
+			return SimpleMath(operation, (a, b));
 		}
-		public static double Simplemath(int operation, double a, double b )
+		public static double SimpleMath(int operation, double a, double b )
 		{
+			if (!IsValidOperation(operation, MATH_SIMPLE))
+			{
+				Console.WriteLine("No such operation");
+				return double.NaN;
+			}
+
 			if (operation == DIV)
 			{
 				if (!ValidateNumber(true, b))
 				{
-					return 0;
+					return double.NaN;
 				}
 			}
 
-			return Simplemath(operation, (a, b));
+			return SimpleMath(operation, (a, b));
 		}
-		private static double Simplemath(int operation, (double, double) nums)
+		private static double SimpleMath(int operation, (double, double) nums)
 		{
-			double result = MathFuncs[operation]( nums );
+			double result = SimpleMathFuncs[operation]( nums );
 
 			Console.WriteLine(MakeCalcString(results.Count-1));
 
@@ -65,6 +88,11 @@ namespace Calculator
 
 		public static double ComplexMath(int operation)
 		{
+			if (!IsValidOperation(operation, MATH_COMPLEX))
+			{
+				Console.WriteLine("No such operation");
+				return double.NaN;
+			}
 			int resultsBefore = results.Count;
 
 			double result = ComplexMathFuncs[operation](ReadNumbers());
@@ -75,6 +103,14 @@ namespace Calculator
 		}
 		public static double ComplexMath(int[] operations, double[] numbers)
 		{
+			foreach (int op in operations)
+			{
+				if (!IsValidOperation(op, MATH_COMPLEX))
+				{
+					Console.WriteLine("No such operation");
+					return double.NaN;
+				}
+			}
 			if (operations.Length == 1)
 			{
 				return ComplexMathFuncs[operations[0]](numbers);
@@ -90,6 +126,10 @@ namespace Calculator
 
 			return 0;
 		}
+		private static bool	IsValidOperation(int operation, int opType)
+		{
+			return operation < OPS_OF_TYPE[opType];
+		}
 
 		private static double ReadNumber(bool divisor)
 		{
@@ -97,7 +137,7 @@ namespace Calculator
 
 			while (true)
 			{
-				while (!double.TryParse(Console.ReadLine(), out input))
+				while (!double.TryParse(textSource.ReadLine(), out input))
 				{
 					Console.WriteLine("Not a number, try again!");
 				}
@@ -118,7 +158,7 @@ namespace Calculator
 
 			while (true)
 			{
-				s = Console.ReadLine();
+				s = textSource.ReadLine();
 				if (s.Length == 0)
 				{
 					if (numbers.Count < 2)
@@ -188,7 +228,7 @@ namespace Calculator
 			{
 				result = Addition((result, num));
 			}
-			return 0;
+			return result;
 		}
 
 		public static double Subtraction((double a, double b) nums)
@@ -234,6 +274,10 @@ namespace Calculator
 
 			//	};
 			//}
+			if (!ValidateNumber(true, nums.b))
+			{
+				return double.NaN;
+			}
 			double result = nums.a / nums.b;
 
 			results.Add((nums.a, DIV, nums.b, result));

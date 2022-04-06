@@ -2,8 +2,9 @@
 
 namespace Calculator
 {
-	class Program
+	public class Calculator
 	{
+
 		public static void Main(string[] args)
 		{
 
