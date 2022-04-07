@@ -121,33 +121,43 @@ namespace Calculator.Tests
 			Assert.Equal(sumSubByOpTest, sum, 10);
 		}
 
+		[Fact]
 		public void TakeInput()
 		{
 			double a = rand.NextDouble();
 			double b = rand.NextDouble();
 
-			Queue<String> string_Inputs =
-				new Queue<String>(new String[]{
+			String[] inputValues = new String[]{
 				a.ToString(),
 				b.ToString()
-			});
-			Maths.textSource = new InputMethod(string_Inputs);
+			};
+
+			Queue<String> string_Queue = new Queue<String>(inputValues);
+			Maths.textSource = new InputMethod(string_Queue);
 
 
 			double add_Input = a + b;
 			double add_InputTest = Maths.SimpleMath(Maths.ADD);
 
+			string_Queue = new Queue<string>(inputValues);
+			Maths.textSource = new InputMethod(string_Queue);
+
 			double subtract_Input = a - b;
-			double subtract_InputTest = Maths.SimpleMath(Maths.ADD);
+			double subtract_InputTest = Maths.SimpleMath(Maths.SUB);
+
+			string_Queue = new Queue<string>(inputValues);
+			Maths.textSource = new InputMethod(string_Queue);
 
 			double multiply_Input = a * b;
-			double multiply_InputTest = Maths.SimpleMath(Maths.ADD);
+			double multiply_InputTest = Maths.SimpleMath(Maths.MULT);
+
+			string_Queue = new Queue<string>(inputValues);
+			Maths.textSource = new InputMethod(string_Queue);
 
 			double divide_Input = a / b;
-			double divide_InputTest = Maths.SimpleMath(Maths.ADD);
+			double divide_InputTest = Maths.SimpleMath(Maths.DIV);
 
-
-			String[] inputValues = new string[11];
+			inputValues = new string[11];
 
 			double add_ComplexInput = 0;
 			double subtract_ComplexInput = 0;
@@ -163,12 +173,14 @@ namespace Calculator.Tests
 
 			inputValues[10] = "";
 
-			string_Inputs = new Queue<String>(inputValues);
-
-			Maths.textSource = new InputMethod(string_Inputs);
-
+			string_Queue = new Queue<String>(inputValues);
+			Maths.textSource = new InputMethod(string_Queue);
 			double add_ComplexInputTest = Maths.ComplexMath(Maths.ADD);
-			double subtract_ComplexInputTest = Maths.ComplexMath(Maths.DIV);
+
+			string_Queue = new Queue<String>(inputValues);
+			Maths.textSource = new InputMethod(string_Queue);
+			double subtract_ComplexInputTest = Maths.ComplexMath(Maths.SUB);
+
 
 			Assert.Equal(add_InputTest, add_Input, 10);
 			Assert.Equal(subtract_InputTest, subtract_Input, 10);
